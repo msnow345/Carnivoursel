@@ -256,7 +256,7 @@
                         switch(currentPosition){
 
                             case "auto": 
-                            movementPx = null;
+                            movementPx = null; 
                             break;
 
                             case "0px": 
