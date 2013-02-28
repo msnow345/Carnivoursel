@@ -25,9 +25,11 @@
                 slideHeight: 400,           
                 infiniteCarousel: true,    //SORT OF WORKING BUT ENTIRELY GROSS. ONLY WORKS FORWARD.
                 autoPlay:false,                 
-                timer: 6000,
+                timer: 6000,                //Only works if autoPLay is on.
 
-                //Youtube Options
+
+
+                //Youtube options, Experimental fun YEAH?
                 youTube:false,                  //If false, no options below this work.
                 search: "Pug",                  //String to search for
                 numberOfSlides: 5,              //Number of slides
@@ -46,6 +48,10 @@
 
             };
 
+            var MARKUP = {
+
+            };
+
 
             var FUNCTIONS = {
 
@@ -53,13 +59,17 @@
                 initMainFunction : function() {  
 
 
-                    FUNCTIONS.checkVideos();         
+                             
                     
                     FUNCTIONS.setWrapper();
 
                     FUNCTIONS.bindControls();
 
+                    FUNCTIONS.checkVideos();
+
                     FUNCTIONS.autoPlay();
+
+
 
 
                 },
@@ -126,7 +136,7 @@
                     var movement;
                     var movementPx;
                     var clone = false;
-                    var youtubeWrapper = $(".youtubelist");
+                    var youtubeWrapper = VARIABLES.$this.find(".youtubelist");
                     var next = VARIABLES.$this.find('.next');
                     var previous = VARIABLES.$this.find('.previous');
 
@@ -140,63 +150,38 @@
 
                         if(SETTINGS.infiniteCarousel === true){
 
-                        if(
-                                currentPosition != "auto" && 
-                                currentPosition  != "0px" && 
-                                parseInt(currentPosition, 10) % SETTINGS.slideWidth !== 0
-                        ){
-                                console.log(parseInt(currentPosition, 10) % SETTINGS.slideWidth);
+                            if(FUNCTIONS.canscrollForwardInfinite(currentPosition) === false){
                                 return false;
+                            }   
 
-                        }
-
-
-                        if( 
-                                parseInt(currentPosition, 10) === -widthCheck + SETTINGS.slideWidth
-                        ){
-
-                                list = VARIABLES.$this.find('.youtubelist').children().last();
-                               
-                                shiftSlides = $(list);
-
-                                shiftSlides.clone().prependTo(VARIABLES.$this.find('.youtubelist'));
-
-                                VARIABLES.$this.find('.youtubelist').children().first().addClass('absolute');
-
+                            if(FUNCTIONS.infiniteScroll(currentPosition, widthCheck) === true){
                                 clone = true;
-
-                        }    
-
+                            }
                         
-                        }else{
-
-                        if(
-                                currentPosition != "auto" && 
-                                currentPosition  != "0px" && 
-                                parseInt(currentPosition, 10) % SETTINGS.slideWidth !== 0 ||
-                                parseInt(currentPosition, 10) === -widthCheck 
-                        ){
-                                console.log(parseInt(currentPosition, 10) % SETTINGS.slideWidth);
-                                return false;
-
                         }
+
+                        if(SETTINGS.infiniteCarousel === false){
+
+                            if(FUNCTIONS.canscrollForward(currentPosition) === false){
+                                return false;
+                            }
 
                         }
 
                         switch(currentPosition){
 
                             case "":
-                            $(".youtubelist").addClass('animation');
+                            youtubeWrapper.addClass('animation');
                             movementPx = "-" + SETTINGS.slideWidth + "px";
                             break;
 
                             case "auto":
-                            $(".youtubelist").addClass('animation');
+                            youtubeWrapper.addClass('animation');
                             movementPx = "-" + SETTINGS.slideWidth + "px";
                             break;
 
                             case "0px": 
-                            $(".youtubelist").addClass('animation');
+                            youtubeWrapper.addClass('animation');
                             movementPx = "-" + SETTINGS.slideWidth + "px";
                             break;
 
@@ -208,33 +193,14 @@
 
                         }
 
-
                         youtubeWrapper.css({left: movementPx});
 
-
-                        setTimeout(function(){
-
-                            if( 
-                                clone === true
-                             ){
-
-                                VARIABLES.$this.find('.youtubelist').children().first().removeClass('absolute');
-                                
-                                $(".youtubelist").removeClass('animation');
-
-                                $(".youtubelist").removeAttr( 'style' );
-
-                                VARIABLES.$this.find('.youtubelist').children().last().remove();
-
-                                currentPosition = "0px";
-                               
-                                clone = false;
-
+                        if(clone === true){
+                             
+                             FUNCTIONS.resetInfinite(clone);
+                             clone = false;
+                             currentPosition = "0px";
                         }
-
-                        }, 350)
-                        
-                        
 
                     });
 
@@ -343,35 +309,87 @@
                 },
 
 
-                infiniteOption: function(){   
-
-                    if(SETTINGS.infiniteCarousel === true){
-
-                        $list = VARIABLES.$this.find('.youtubelist li');
-                       
-                        $firstSlide = $list.first();
-
-                        $lastSlide = $list.last();
-
-                        $firstSlide.prependTo(VARIABLES.$this.find('.youtubelist'));
-
-                        $lastSlide.appendTo(VARIABLES.$this.find('.youtubelist'));
-
-
-                    }else{
-
-                        return true;
-
-                    }
-
-
-                },
-
                 resetLeft: function(){
 
                     var youtubeWrapper = $(".youtubelist");
                     youtubeWrapper.css({left: '0px'});
 
+                },
+
+                canscrollForwardInfinite: function (currentPosition){
+
+                        if(
+                                currentPosition != "auto" && 
+                                currentPosition  != "0px" && 
+                                parseInt(currentPosition, 10) % SETTINGS.slideWidth !== 0
+                        ){
+                                return false;
+                        }
+
+                },
+
+                canscrollForward: function (currentPosition){
+
+                        if(
+                                currentPosition != "auto" && 
+                                currentPosition  != "0px" && 
+                                parseInt(currentPosition, 10) % SETTINGS.slideWidth !== 0 ||
+                                parseInt(currentPosition, 10) === -widthCheck 
+                        ){
+                                console.log(parseInt(currentPosition, 10) % SETTINGS.slideWidth);
+                                return false;
+
+                        }
+
+                },
+
+                canscrollBackwards: function (){
+                    
+                },
+
+                infiniteScroll: function(currentPosition, widthCheck){
+
+                    if( 
+                                parseInt(currentPosition, 10) === -widthCheck + SETTINGS.slideWidth
+                        ){
+
+
+                                list = VARIABLES.$this.find('.youtubelist').children().last();
+                               
+                                shiftSlides = $(list);
+
+                                shiftSlides.clone().prependTo(VARIABLES.$this.find('.youtubelist'));
+
+                                VARIABLES.$this.find('.youtubelist').children().first().addClass('absolute');
+
+                                return true;
+
+                        }else{
+                            return false;
+                        }    
+
+
+
+                },
+
+                resetInfinite: function(clone){
+
+                    var carnivourselList = VARIABLES.$this.find('.youtubelist');
+
+                    setTimeout(function(){
+
+                                carnivourselList.children().first().removeClass('absolute');
+                                
+                                carnivourselList.removeClass('animation');
+
+                                carnivourselList.removeAttr( 'style' );
+
+                                VARIABLES.$this.find('.youtubelist').children().last().remove();
+
+                        }, 350);
+
+                    
+                        
                 },
 
                 autoPlay: function(){
