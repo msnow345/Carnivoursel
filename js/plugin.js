@@ -23,7 +23,7 @@
                 fluid:false,                //If carousel is to be fluid
                 slideWidth: 600,                
                 slideHeight: 400,           
-                infiniteCarousel: true,    //SORT OF WORKING BUT ENTIRELY GROSS. ONLY WORKS FORWARD.
+                infiniteCarousel: false,    //SORT OF WORKING BUT ENTIRELY GROSS. ONLY WORKS FORWARD.
                 autoPlay:false,                 
                 timer: 6000,                //Only works if autoPLay is on.
 
@@ -61,14 +61,13 @@
 
                              
                     
-                    FUNCTIONS.setWrapper();
+                    // FUNCTIONS.setWrapper();
 
                     FUNCTIONS.bindControls();
 
                     FUNCTIONS.checkVideos();
 
                     FUNCTIONS.autoPlay();
-
 
 
 
@@ -271,7 +270,7 @@
 
                         }
 
-                        // FUNCTIONS.infiniteOption();
+
                         youtubeWrapper.css({left: movementPx});
                         
                         

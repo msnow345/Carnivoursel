@@ -62,6 +62,12 @@ table {
 
 .youtubelist li{
   float:left;
+  max-width:100%;
+}
+
+.youtubelist li img{
+  width:100%;
+  height:auto;
 }
 
 .thumbnails{
@@ -76,6 +82,8 @@ table {
 
 .wrapper{
   overflow:hidden;
+  width:100%;
 }
 
 .absolute{position:absolute; left:0;}
+
